@@ -1,26 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: quarkus-demo-jvm-deployment
   labels:
-    app: nginx
+    app: quarkus-demo-jvm
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nginx
+      app: quarkus-demo-jvm
   template:
     metadata:
       labels:
-        app: nginx
+        app: quarkus-demo-jvm
     spec:
       containers:
-      - name: nginx
-        image: nginx:latest
+      - name: quarkus-demo-jvm
+        image: quay.io/nimmo_rh/quarkus-demo-jvm:0.0.1
         imagePullPolicy: Always
-        env:
-        - name: NGINX_HOST
-          value: 8080
         ports:
         - containerPort: 8080
           protocol: TCP

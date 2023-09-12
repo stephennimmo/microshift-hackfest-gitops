@@ -1,12 +1,12 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: nginx-service
+  name: quarkus-demo-jvm-service
   labels:
-    app: nginx
+    app: quarkus-demo-jvm
 spec:
   selector:
-    app: nginx
+    app: quarkus-demo-jvm
   ports:
   - port: 8080
     protocol: TCP
