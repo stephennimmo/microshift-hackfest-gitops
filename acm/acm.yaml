@@ -1,0 +1,78 @@
+apiVersion: v1                    
+kind: Namespace
+metadata:
+  name: hackfest                             
+---
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: hackfest-quarkus-demo-jvm
+  namespace: hackfest
+spec:
+  componentKinds:
+  - group: apps.open-cluster-management.io
+    kind: Subscription
+  descriptor: {}
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values: 
+          - hackfest-quarkus-demo-jvm
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ggithubcom-stephennimmo-microshift-hackfest-gitops-ns
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  annotations:
+    apps.open-cluster-management.io/reconcile-rate: medium
+  name: ggithubcom-stephennimmo-microshift-hackfest-gitops
+  namespace: ggithubcom-stephennimmo-microshift-hackfest-gitops-ns
+spec:
+  type: Git
+  pathname: 'https://github.com/stephennimmo/microshift-hackfest-gitops'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: main
+    apps.open-cluster-management.io/git-path: app1/overlays/default
+    apps.open-cluster-management.io/reconcile-option: merge
+  labels:
+    app: hackfest-quarkus-demo-jvm
+  name: hackfest-quarkus-demo-jvm-subscription-1
+  namespace: hackfest
+spec:
+  channel: ggithubcom-stephennimmo-microshift-hackfest-gitops-ns/ggithubcom-stephennimmo-microshift-hackfest-gitops
+  placement:
+    placementRef:
+      kind: Placement
+      name: hackfest-quarkus-demo-jvm-placement-1
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  labels:
+    app: hackfest-quarkus-demo-jvm
+  name: hackfest-quarkus-demo-jvm-placement-1
+  namespace: hackfest
+spec:
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+  clusterSets:
+    - global
+---
+apiVersion: cluster.open-cluster-management.io/v1beta2
+kind: ManagedClusterSetBinding
+metadata:
+  namespace: hackfest
+  name: global
+spec:
+  clusterSet: global
