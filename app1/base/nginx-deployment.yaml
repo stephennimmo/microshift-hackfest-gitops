@@ -18,6 +18,9 @@ spec:
       - name: nginx
         image: nginx:latest
         imagePullPolicy: Always
+        env:
+        - name: NGINX_HOST
+          value: 8080
         ports:
-        - containerPort: 80
+        - containerPort: 8080
           protocol: TCP
